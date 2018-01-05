@@ -28,5 +28,7 @@ while True:
                 if keyword.lower() in content.lower():
                     bot.SendTo(g, replyDict[keyword])
                     keywordInContent = True
+        else:
+            bot.SendTo(g, "询问关键词的话请加上问号")
         if not keywordInContent:
             bot.SendTo(g, "不好意思，你所说的关键词尚未收录。快去https://github.com/QingGo/ddnetQQbot贡献词库吧。")
