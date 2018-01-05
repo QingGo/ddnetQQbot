@@ -25,7 +25,7 @@ while True:
         print ("@我的消息")
         if "?" in content or "？" in content:
             for keyword in replyDict:
-                if keyword in content.lower():
+                if keyword.lower() in content.lower():
                     bot.SendTo(g, replyDict[keyword])
                     keywordInContent = True
         if not keywordInContent:
