@@ -37,4 +37,4 @@ A customize QQ bot for China TeeWorlds/DDNet community.
 - 关键词里的英文是大小写不敏感的，比如ddnet和DDnet表示同一个关键词。
 - 不要重复添加关键词。
 
-修改完关键词以后再向我发起Pull request，让我来合并内容。
+修改完关键词以后再向我的dev分支发起Pull request，让我来合并内容。

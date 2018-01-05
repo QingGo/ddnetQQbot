@@ -2,8 +2,10 @@ from qqbot import _bot as bot
 import time
 import csv
 
+#这里改为你的q号？
 bot.Login(['-q', '2143738142'])
 
+#这里改为你的群名
 g = bot.List('group', 'TeeWorlds中国社区')[0]
 
 #for test
@@ -21,6 +23,7 @@ while True:
     fromType, fromNumber, groupNumber, content = bot.poll()
     print (fromType, fromNumber, groupNumber, content)
     keywordInContent = False
+    #这里改为你的ID
     if "@brainfullyTEE" in content:
         print ("@我的消息")
         if "?" in content or "？" in content:
