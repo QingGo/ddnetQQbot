@@ -1,7 +1,7 @@
 # ddnetQQbot
 
 ## 项目简介
-A customize QQ bot for China TeeWorlds/DDNet community. 
+A customize QQ bot for China TeeWorlds/DDNet community.
 
 为teeworlds中国社区QQ群而写的迎新自动回复机器人。
 
@@ -36,3 +36,5 @@ A customize QQ bot for China TeeWorlds/DDNet community.
 - 注意双引号和逗号要使用英文的半角符号。
 - 关键词里的英文是大小写不敏感的，比如ddnet和DDnet表示同一个关键词。
 - 不要重复添加关键词。
+
+修改完关键词以后再向我发起Pull request，让我来合并内容。
