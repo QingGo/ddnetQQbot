@@ -26,6 +26,7 @@ A customize QQ bot for China TeeWorlds/DDNet community.
 ## 增加词库的方法
 先点右上角的Fork复制我的代码到你自己的代码库。然后更改其中的autoReply.txt文件，其格式为
 
+>#以#开头的行为注释，空行则直接忽略
 
 >"关键词1", "回复内容1"
 

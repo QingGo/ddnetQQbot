@@ -16,7 +16,12 @@ replyDict = {}
 with open(replyFile, 'r') as f:
     spamreader = csv.reader(f, delimiter=',')
     for row in spamreader:
-        replyDict[row[0]] = row[1]
+        if not row:
+            continue
+        if row[0].startswith('#'):
+            print(row)
+        else:
+            replyDict[row[0]] = row[1]
 
 while True:
     time.sleep(2)
