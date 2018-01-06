@@ -45,7 +45,7 @@ while True:
                 bot.SendTo(g, "不好意思，你所说的关键词尚未收录。快去https://github.com/QingGo/ddnetQQbot 贡献词库吧。如果要进行普通对话请不要带问号。")
         else:
             requestJson["info"] = content.replace("@brainfullyTEE ","")
-            requestJson["userid"] = "2960233702"
+            requestJson["userid"] = groupNumber
             respone = requests.post(chatAPI, requestJson)
-            responeContent = json.loads(respone.text)['text']
-            bot.SendTo(g, responeContent)
+            responeContent = json.loads(respone.text)
+            bot.SendTo(g, responeContent["text"]+responeContent.get("url", ""))
