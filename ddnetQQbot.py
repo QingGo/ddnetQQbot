@@ -1,6 +1,8 @@
 from qqbot import _bot as bot
 import time
 import csv
+import requests
+import json
 
 #这里改为你的q号？
 bot.Login(['-q', '2143738142'])
@@ -23,6 +25,9 @@ with open(replyFile, 'r') as f:
         else:
             replyDict[row[0]] = row[1]
 
+chatAPI = "http://www.tuling123.com/openapi/api"
+requestJson = {"key": "692b5c941e7a43e2be89b1047b605049","info": "", "userid":""}
+
 while True:
     time.sleep(2)
     fromType, fromNumber, groupNumber, content = bot.poll()
@@ -36,7 +41,11 @@ while True:
                 if keyword.lower() in content.lower():
                     bot.SendTo(g, replyDict[keyword])
                     keywordInContent = True
+            if not keywordInContent:
+                bot.SendTo(g, "不好意思，你所说的关键词尚未收录。快去https://github.com/QingGo/ddnetQQbot 贡献词库吧。如果要进行普通对话请不要带问号。")
         else:
-            bot.SendTo(g, "询问关键词的话请加上问号")
-        if not keywordInContent:
-            bot.SendTo(g, "不好意思，你所说的关键词尚未收录。快去https://github.com/QingGo/ddnetQQbot贡献词库吧。")
+            requestJson["info"] = content.replace("@brainfullyTEE ","")
+            requestJson["userid"] = "2960233702"
+            respone = requests.post(chatAPI, requestJson)
+            responeContent = json.loads(respone.text)['text']
+            bot.SendTo(g, responeContent)
