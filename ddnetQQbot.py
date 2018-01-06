@@ -9,7 +9,7 @@ bot.Login(['-q', '2143738142'])
 
 #这里改为你的群名
 mainGroup = bot.List('group', 'TeeWorlds中国社区')[0] #2960233702
-chatGroup = bot.List('group', 'TeeWorlds闲聊群')[0] #1516349281
+chatGroup = bot.List('group', 'Teeworlds闲聊群')[0] #1516349281
 isChatGroup = False
 
 #for test
@@ -37,9 +37,11 @@ while True:
     keywordInContent = False
     if groupNumber == "2960233702":
         sendtoGroup = mainGroup
+        print("来自主群的消息")
         isChatGroup = False
     elif groupNumber == "1516349281":
-        sendtoGroup = mainGroup
+        sendtoGroup = chatGroup
+        print("来自闲聊群的消息")
         isChatGroup = True
     #这里改为你的ID
     if "@brainfullyTEE" in content:
