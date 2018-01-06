@@ -56,7 +56,7 @@ while True:
         else:
             if isChatGroup:
                 requestJson["info"] = content.replace("@brainfullyTEE ","")
-                requestJson["userid"] = groupNumber
+                requestJson["userid"] = fromNumber
                 respone = requests.post(chatAPI, requestJson)
                 responeContent = json.loads(respone.text)
                 bot.SendTo(sendtoGroup, responeContent["text"]+responeContent.get("url", ""))
