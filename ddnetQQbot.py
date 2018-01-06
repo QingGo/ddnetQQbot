@@ -44,6 +44,8 @@ while True:
         print("来自闲聊群的消息")
         isChatGroup = True
     #这里改为你的ID
+    if "大家好" in content:
+        bot.SendTo(sendtoGroup, "欢迎新人～如果有什么游戏相关的问题可以带上问号“？”并且@我向我提问～")
     if "@brainfullyTEE" in content:
         print ("@我的消息")
         if "?" in content or "？" in content:
