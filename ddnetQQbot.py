@@ -35,11 +35,11 @@ while True:
     fromType, groupNumber, fromNumber, content = bot.poll()
     print (fromType, groupNumber, fromNumber, content)
     keywordInContent = False
-    if groupNumber == "2960233702":
+    if groupNumber == "663326569":
         sendtoGroup = mainGroup
         print("来自主群的消息")
         isChatGroup = False
-    elif groupNumber == "1516349281":
+    elif groupNumber == "682654524":
         sendtoGroup = chatGroup
         print("来自闲聊群的消息")
         isChatGroup = True
