@@ -5,7 +5,7 @@ import requests
 import json
 
 #这里改为你的q号？
-bot.Login(['-q', '2143738142'])
+bot.Login(['-u', '2143738142'])
 
 #这里改为你的群名
 mainGroup = bot.List('group', 'TeeWorlds中国社区')[0] #2960233702
