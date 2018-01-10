@@ -4,17 +4,19 @@ import csv
 import requests
 import json
 
-#这里改为你的q号？
+#-u参数表示使用某用户的设置文件登录
+#这里需要更改qqbot的设置文件~/.qqbot-tmp/v2.3.conf？
+#参考qqbot项目的说明
 bot.Login(['-u', '2143738142'])
 
 #这里改为你的群名
 mainGroup = bot.List('group', 'TeeWorlds中国社区')[0] #2960233702
+print("mainGroup.uin: ", mainGroup.uin)
 chatGroup = bot.List('group', 'Teeworlds闲聊群')[0] #1516349281
+print("chatGroup.uin: ",chatGroup.uin)
 isChatGroup = False
 
-#for test
-#mainGroup = bot.List('group')[1]
-
+#读取词典
 replyFile = "autoReply.txt"
 replyDict = {}
 with open(replyFile, 'r') as f:
@@ -27,19 +29,21 @@ with open(replyFile, 'r') as f:
         else:
             replyDict[row[0]] = row[1]
 
+#图灵机器人平台的API
 chatAPI = "http://www.tuling123.com/openapi/api"
 requestJson = {"key": "692b5c941e7a43e2be89b1047b605049","info": "", "userid":""}
 
+#无限轮询消息并作出相应回应
 while True:
     time.sleep(2)
     fromType, groupNumber, fromNumber, content = bot.poll()
     print (fromType, groupNumber, fromNumber, content)
     keywordInContent = False
-    if groupNumber == "663326569":
+    if groupNumber == mainGroup.uin:
         sendtoGroup = mainGroup
         print("来自主群的消息")
         isChatGroup = False
-    elif groupNumber == "682654524":
+    elif groupNumber == chatGroup.uin:
         sendtoGroup = chatGroup
         print("来自闲聊群的消息")
         isChatGroup = True
