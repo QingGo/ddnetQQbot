@@ -1,5 +1,9 @@
 # ddnetQQbot
 
+## To-Do List
+- 增加定时自动登录功能
+- 完善游戏词库和wiki
+
 ## 项目简介
 A customize QQ bot for China TeeWorlds/DDNet community.
 
