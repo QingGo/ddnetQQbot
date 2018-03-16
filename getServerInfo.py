@@ -80,7 +80,7 @@ def get_server_info(address):
         return server_info
 
     except Exception as e:
-        print(e)
+        #print(e)
         return None
 
 
@@ -116,7 +116,7 @@ def get_server_info2(address):
         return server_info
 
     except Exception as e:
-        print(e)
+        #print(e)
         return None
 
 
@@ -159,7 +159,7 @@ def get_server_info3(address):
         return server_info
 
     except Exception as e:
-        print(e)
+        #print(e)
         return None
 
 
@@ -196,7 +196,7 @@ def get_list(address):
                 servers += [[(ip, port), SERVERTYPE_LEGACY]]
 
     except Exception as e:
-        print(e)
+        #print(e)
         sock.close()
 
     return servers
@@ -225,7 +225,7 @@ def get_list2(address):
                 servers += [[(ip, port), SERVERTYPE_NORMAL]]
 
     except Exception as e:
-        print(e)
+        #print(e)
         sock.close()
 
     return servers
