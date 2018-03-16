@@ -74,6 +74,7 @@ def get_servers_info():
 #参考qqbot项目的说明
 print("test get server info")
 print(get_servers_info())
+
 bot.Login(['-u', '2143738142'])
 
 #这里改为你的群名
@@ -119,6 +120,13 @@ while True:
         bot.SendTo(sendtoGroup, "欢迎新人～如果有什么游戏相关的问题可以带上问号“？”并且@我向我提问～")
     if "@brainfullyTEE" in content:
         print ("@我的消息")
+        if "player" in content:
+            players_list = get_servers_info()
+            if len(players_list) == 0:
+                sendStr = "目前没人在线."
+            else:
+                sendStr = ("目前在线玩家数为{}，分别为:".format(len(players_list))) + (", ".join(players_list))
+            bot.SendTo(sendtoGroup, sendStr)
         if "?" in content or "？" in content:
             for keyword in replyDict:
                 if keyword.lower() in content.lower():

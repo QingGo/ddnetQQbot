@@ -205,11 +205,11 @@ def get_list(address):
 def get_list2(address):
     servers = []
 
-    try:        
+    try:
         sock = socket(AF_INET, SOCK_DGRAM)
         sock.settimeout(TIMEOUT)
         sock.sendto(PACKET_GETLIST2, address)
-    
+
         while 1:
             data, addr = sock.recvfrom(1400)
 
@@ -229,78 +229,3 @@ def get_list2(address):
         sock.close()
 
     return servers
-
-
-
-servers_CHNTom = [[('119.29.57.22', 8304), 0],
-                 [('119.29.57.22', 8403), 0],
-                 [('119.29.57.22', 7321), 0],
-                 [('119.29.57.22', 7304), 0],
-                 [('119.29.57.22', 7317), 0],
-                 [('119.29.57.22', 8303), 0],
-                 [('119.29.57.22', 8203), 0],
-                 [('119.29.57.22', 8406), 0],
-                 [('119.29.57.22', 8409), 0],
-                 [('119.29.57.22', 8200), 0],
-                 [('119.29.57.22', 7303), 0],
-                 [('119.29.57.22', 8404), 0],
-                 [('119.29.57.22', 8410), 0],
-                 [('119.29.57.22', 8201), 0],
-                 [('119.29.57.22', 8408), 0],
-                 [('119.29.57.22', 8202), 0],
-                 [('119.29.57.22', 7306), 0],
-                 [('119.29.57.22', 7400), 0],
-                 [('119.29.57.22', 8407), 0],
-                 [('119.29.57.22', 7401), 0],
-                 [('119.29.57.22', 8305), 0],
-                 [('119.29.57.22', 8402), 0],
-                 [('119.29.57.22', 7305), 0]]
-
-
-# In[33]:
-
-
-servers_info = []
-
-print(str(len(servers_CHNTom)) + " servers")
-
-for server in servers_CHNTom:
-    #[('47.74.9.32', 8303), 0]
-    s = Server_Info(server[0], server[1])
-    servers_info.append(s)
-    s.start()
-    time.sleep(0.001) # avoid issues
-
-num_players = 0
-num_clients = 0
-
-servers_info_list = []
-
-while len(servers_info) != 0:
-    if servers_info[0].finished == True:
-        if servers_info[0].info:
-            servers_info_list.append(servers_info[0].info)
-            num_players += servers_info[0].info["num_players"]
-            if servers_info[0].type == SERVERTYPE_NORMAL:
-                num_clients += servers_info[0].info["num_clients"]
-            else:
-                num_clients += servers_info[0].info["num_players"]
-
-        del servers_info[0]
-
-    time.sleep(0.001) # be nice
-
-print(str(num_players) + " players and " + str(num_clients-num_players) + " spectators")
-
-
-# In[34]:
-
-
-player_list = []
-for servers_info in servers_info_list:
-    if servers_info['players']:
-        for player_info in servers_info['players']:
-            player_list.append(player_info['name'].decode())
-print(player_list)
-
-
