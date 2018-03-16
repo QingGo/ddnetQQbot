@@ -4,9 +4,76 @@ import csv
 import requests
 import json
 
+from getServerInfo import Server_Info
+
+servers_CHNTom = [[('119.29.57.22', 8304), 0],
+                 [('119.29.57.22', 8403), 0],
+                 [('119.29.57.22', 7321), 0],
+                 [('119.29.57.22', 7304), 0],
+                 [('119.29.57.22', 7317), 0],
+                 [('119.29.57.22', 8303), 0],
+                 [('119.29.57.22', 8203), 0],
+                 [('119.29.57.22', 8406), 0],
+                 [('119.29.57.22', 8409), 0],
+                 [('119.29.57.22', 8200), 0],
+                 [('119.29.57.22', 7303), 0],
+                 [('119.29.57.22', 8404), 0],
+                 [('119.29.57.22', 8410), 0],
+                 [('119.29.57.22', 8201), 0],
+                 [('119.29.57.22', 8408), 0],
+                 [('119.29.57.22', 8202), 0],
+                 [('119.29.57.22', 7306), 0],
+                 [('119.29.57.22', 7400), 0],
+                 [('119.29.57.22', 8407), 0],
+                 [('119.29.57.22', 7401), 0],
+                 [('119.29.57.22', 8305), 0],
+                 [('119.29.57.22', 8402), 0],
+                 [('119.29.57.22', 7305), 0]]
+
+#get the players list to Tom Servers
+def get_servers_info():
+    servers_info = []
+    #print(str(len(servers_CHNTom)) + " servers")
+    for server in servers_CHNTom:
+        #[('47.74.9.32', 8303), 0]
+        s = Server_Info(server[0], server[1])
+        servers_info.append(s)
+        s.start()
+        time.sleep(0.001) # avoid issues
+
+    num_players = 0
+    num_clients = 0
+
+    servers_info_list = []
+
+    while len(servers_info) != 0:
+        if servers_info[0].finished == True:
+            if servers_info[0].info:
+                servers_info_list.append(servers_info[0].info)
+                num_players += servers_info[0].info["num_players"]
+                if servers_info[0].type == 0:
+                    num_clients += servers_info[0].info["num_clients"]
+                else:
+                    num_clients += servers_info[0].info["num_players"]
+
+            del servers_info[0]
+
+        time.sleep(0.001) # be nice
+
+    #print(str(num_players) + " players and " + str(num_clients-num_players) + " spectators")
+
+    player_list = []
+    for servers_info in servers_info_list:
+        if servers_info['players']:
+            for player_info in servers_info['players']:
+                player_list.append(player_info['name'].decode())
+    return player_list
+
 #-u参数表示使用某用户的设置文件登录
 #这里需要更改qqbot的设置文件~/.qqbot-tmp/v2.3.conf？
 #参考qqbot项目的说明
+print("test get server info")
+print(get_servers_info())
 bot.Login(['-u', '2143738142'])
 
 #这里改为你的群名
