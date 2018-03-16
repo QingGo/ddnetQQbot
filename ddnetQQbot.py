@@ -80,7 +80,7 @@ def get_servers_info():
         try:
             players_list = player_list_temp
             print("get data successfully")
-            print(players_list)
+            #print(players_list)
         finally:
             lock.release()
             pass
@@ -90,8 +90,8 @@ def get_servers_info():
 def sendMessageOnline():
     while True:
         time.sleep(2)
-        print (friendDict)
-        print (players_list)
+        #print (friendDict)
+        #print (players_list)
         for qqNickName in friendDict:
             for friend in friendDict[qqNickName]:
                 if friend[0] in players_list:
