@@ -124,7 +124,7 @@ with open(friendFile, 'r') as f:
         if row[0].startswith('#'):
             print(row)
         else:
-            friendDict[row[0]] = row[1:]
+            friendDict[row[0]] = map(list, zip(row[1:],([0]*len(row[1:]))))
 
 #图灵机器人平台的API
 chatAPI = "http://www.tuling123.com/openapi/api"
@@ -132,7 +132,7 @@ requestJson = {"key": "692b5c941e7a43e2be89b1047b605049","info": "", "userid":""
 
 
 players_list = []
-print(bot.List('buddy', qqNickName))
+print(bot.List('buddy'))
 #无限轮询消息并作出相应回应
 while True:
     time.sleep(2)
@@ -141,11 +141,19 @@ while True:
     for qqNickName in friendDict:
         for friend in friendDict[qqNickName]:
             if players_list != last_players_list:
-                if friend in last_players_list:
-                    players_list = last_players_list
-                    myQQId = bot.List('buddy', qqNickName)[0]
-                    print(myQQId)
-                    bot.SendTo(myQQId, "你的好友{}上线了".format(friend))
+                if friend[0] in last_players_list:
+                    if friend[1] == 0:
+                        players_list = last_players_list
+                        myQQId = bot.List('buddy', qqNickName)[0]
+                        print(myQQId)
+                        bot.SendTo(myQQId, "你的好友{}上线了。".format(friend[0]))
+                        friend[1] = 1
+                    else:
+                        pass
+                else:
+                    friend[1] = 0
+            else:
+                pass
     keywordInContent = False
     if groupNumber == mainGroup.uin:
         sendtoGroup = mainGroup
