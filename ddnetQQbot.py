@@ -140,20 +140,19 @@ while True:
     print (fromType, groupNumber, fromNumber, content)
     for qqNickName in friendDict:
         for friend in friendDict[qqNickName]:
-            if players_list != last_players_list:
-                if friend[0] in last_players_list:
-                    if friend[1] == 0:
-                        players_list = last_players_list
-                        myQQId = bot.List('buddy', qqNickName)[0]
-                        print(myQQId)
-                        bot.SendTo(myQQId, "你的好友{}上线了。".format(friend[0]))
-                        friend[1] = 1
-                    else:
-                        pass
+            if friend[0] in last_players_list:
+                if friend[1] == 0:
+                    players_list = last_players_list
+                    myQQId = bot.List('buddy', qqNickName)[0]
+                    print(myQQId)
+                    bot.SendTo(myQQId, "你的好友{}上线了。".format(friend[0]))
+                    friend[1] = 1
                 else:
-                    friend[1] = 0
+                    pass
             else:
-                pass
+                if friend[1] == 1:
+                    bot.SendTo(myQQId, "你的好友{}下线了。".format(friend[0]))
+                friend[1] = 0
     keywordInContent = False
     if groupNumber == mainGroup.uin:
         sendtoGroup = mainGroup
