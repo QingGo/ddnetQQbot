@@ -4,7 +4,8 @@ import csv
 import requests
 import json
 
-from multiprocessing import Process, Lock
+import threading
+#from multiprocessing import Process, Lock
 
 from getServerInfo import Server_Info
 
@@ -33,12 +34,13 @@ servers_CHNTom = [[('119.29.57.22', 8304), 0],
                  [('119.29.57.22', 7305), 0]]
 
 #get the players list to Tom Servers in another thread every 30s
+players_list = []
 last_players_list = []
-#lock = threading.Lock()
-lock = Lock()
+lock = threading.Lock()
+#lock = Lock()
 
 def get_servers_info():
-    global last_players_list
+    global players_list
     while True:
         servers_info = []
         #print(str(len(servers_CHNTom)) + " servers")
@@ -69,80 +71,32 @@ def get_servers_info():
             time.sleep(0.001) # be nice
         #print(str(num_players) + " players and " + str(num_clients-num_players) + " spectators")
 
-        player_list = []
+        player_list_temp = []
         for servers_info in servers_info_list:
             if servers_info['players']:
                 for player_info in servers_info['players']:
-                    player_list.append(player_info['name'].decode())
+                    player_list_temp.append(player_info['name'].decode())
         lock.acquire()
         try:
-            last_players_list = player_list
+            players_list = player_list_temp
             print("get data successfully")
+            print(players_list)
         finally:
             lock.release()
             pass
         time.sleep(30)
 
 
-#-u参数表示使用某用户的设置文件登录
-#这里需要更改qqbot的设置文件~/.qqbot-tmp/v2.3.conf？
-#参考qqbot项目的说明
-print("test get server info")
-print(last_players_list)
-
-bot.Login(['-u', '2143738142'])
-
-#这里改为你的群名
-mainGroup = bot.List('group', 'TeeWorlds中国社区')[0] #2960233702
-print("mainGroup.uin: ", mainGroup.uin)
-chatGroup = bot.List('group', 'Teeworlds闲聊群')[0] #1516349281
-print("chatGroup.uin: ",chatGroup.uin)
-isChatGroup = False
-
-#读取词典
-replyFile = "autoReply.txt"
-replyDict = {}
-with open(replyFile, 'r') as f:
-    spamreader = csv.reader(f, delimiter=',')
-    for row in spamreader:
-        if not row:
-            continue
-        if row[0].startswith('#'):
-            print(row)
-        else:
-            replyDict[row[0]] = row[1]
-
-#读取好友列表
-friendFile = "friendList.txt"
-friendDict = {}
-with open(friendFile, 'r') as f:
-    spamreader = csv.reader(f, delimiter=',')
-    for row in spamreader:
-        if not row:
-            continue
-        if row[0].startswith('#'):
-            print(row)
-        else:
-            friendDict[row[0]] =list(map(list, zip(row[1:],([0]*len(row[1:])))))
-
-    #图灵机器人平台的API
-chatAPI = "http://www.tuling123.com/openapi/api"
-requestJson = {"key": "692b5c941e7a43e2be89b1047b605049","info": "", "userid":""}
-
-
-players_list = []
-print(bot.List('buddy'))
-#无限轮询消息并作出相应回应
-
 def sendMessageOnline():
     while True:
         time.sleep(2)
         print (friendDict)
+        print (players_list)
         for qqNickName in friendDict:
             for friend in friendDict[qqNickName]:
-                if friend[0] in last_players_list:
+                if friend[0] in players_list:
                     if friend[1] == 0:
-                        players_list = last_players_list
+                        last_players_list = players_list
                         myQQId = bot.List('buddy', qqNickName)[0]
                         #print(myQQId)
                         bot.SendTo(myQQId, "你的好友{}上线了。".format(friend[0]))
@@ -198,13 +152,62 @@ def sendMessageReply():
                 else:
                     bot.SendTo(sendtoGroup, "询问关键词的话请加上问号")
 
+#-u参数表示使用某用户的设置文件登录
+#这里需要更改qqbot的设置文件~/.qqbot-tmp/v2.3.conf？
+#参考qqbot项目的说明
+print("test get server info")
+print(last_players_list)
 
+bot.Login(['-u', '2143738142'])
+
+#这里改为你的群名
+mainGroup = bot.List('group', 'TeeWorlds中国社区')[0] #2960233702
+print("mainGroup.uin: ", mainGroup.uin)
+chatGroup = bot.List('group', 'Teeworlds闲聊群')[0] #1516349281
+print("chatGroup.uin: ",chatGroup.uin)
+isChatGroup = False
+
+#读取词典
+replyFile = "autoReply.txt"
+replyDict = {}
+with open(replyFile, 'r') as f:
+    spamreader = csv.reader(f, delimiter=',')
+    for row in spamreader:
+        if not row:
+            continue
+        if row[0].startswith('#'):
+            print(row)
+        else:
+            replyDict[row[0]] = row[1]
+
+#读取好友列表
+friendFile = "friendList.txt"
+friendDict = {}
+with open(friendFile, 'r') as f:
+    spamreader = csv.reader(f, delimiter=',')
+    for row in spamreader:
+        if not row:
+            continue
+        if row[0].startswith('#'):
+            print(row)
+        else:
+            friendDict[row[0]] =list(map(list, zip(row[1:],([0]*len(row[1:])))))
+
+    #图灵机器人平台的API
+chatAPI = "http://www.tuling123.com/openapi/api"
+requestJson = {"key": "692b5c941e7a43e2be89b1047b605049","info": "", "userid":""}
+
+print(bot.List('buddy'))
+#无限轮询消息并作出相应回应
+'''
 info_process = Process(target=get_servers_info)
 send_message_online = Process(target=sendMessageOnline)
 send_message_reply = Process(target=sendMessageReply)
+'''
+info_process = threading.Thread(target=get_servers_info)
+send_message_online = threading.Thread(target=sendMessageOnline)
+send_message_reply = threading.Thread(target=sendMessageReply)
+
 info_process.start()
 send_message_online.start()
 send_message_reply.start()
-info_process.join()
-send_message_online.join()
-send_message_reply.join()
