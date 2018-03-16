@@ -3,6 +3,7 @@ import time
 import csv
 import requests
 import json
+import threading
 
 from getServerInfo import Server_Info
 
@@ -30,50 +31,65 @@ servers_CHNTom = [[('119.29.57.22', 8304), 0],
                  [('119.29.57.22', 8402), 0],
                  [('119.29.57.22', 7305), 0]]
 
-#get the players list to Tom Servers
+#get the players list to Tom Servers in another thread every 30s
+last_players_list = []
+lock = threading.Lock()
+
 def get_servers_info():
-    servers_info = []
-    #print(str(len(servers_CHNTom)) + " servers")
-    for server in servers_CHNTom:
-        #[('47.74.9.32', 8303), 0]
-        s = Server_Info(server[0], server[1])
-        servers_info.append(s)
-        s.start()
-        time.sleep(0.001) # avoid issues
+    global last_players_list
+    while True:
+        servers_info = []
+        #print(str(len(servers_CHNTom)) + " servers")
+        for server in servers_CHNTom:
+            #[('47.74.9.32', 8303), 0]
+            s = Server_Info(server[0], server[1])
+            servers_info.append(s)
+            s.start()
+            time.sleep(0.001) # avoid issues
 
-    num_players = 0
-    num_clients = 0
+        num_players = 0
+        num_clients = 0
 
-    servers_info_list = []
+        servers_info_list = []
 
-    while len(servers_info) != 0:
-        if servers_info[0].finished == True:
-            if servers_info[0].info:
-                servers_info_list.append(servers_info[0].info)
-                num_players += servers_info[0].info["num_players"]
-                if servers_info[0].type == 0:
-                    num_clients += servers_info[0].info["num_clients"]
-                else:
-                    num_clients += servers_info[0].info["num_players"]
+        while len(servers_info) != 0:
+            if servers_info[0].finished == True:
+                if servers_info[0].info:
+                    servers_info_list.append(servers_info[0].info)
+                    num_players += servers_info[0].info["num_players"]
+                    if servers_info[0].type == 0:
+                        num_clients += servers_info[0].info["num_clients"]
+                    else:
+                        num_clients += servers_info[0].info["num_players"]
 
-            del servers_info[0]
+                del servers_info[0]
 
-        time.sleep(0.001) # be nice
+            time.sleep(0.001) # be nice
+        #print(str(num_players) + " players and " + str(num_clients-num_players) + " spectators")
 
-    #print(str(num_players) + " players and " + str(num_clients-num_players) + " spectators")
+        player_list = []
+        for servers_info in servers_info_list:
+            if servers_info['players']:
+                for player_info in servers_info['players']:
+                    player_list.append(player_info['name'].decode())
+        lock.acquire()
+        try:
+            last_players_list = player_list
+            print("get data successfully")
+            time.sleep(30)
+        finally:
+            # 改完了一定要释放锁:
+            lock.release()
 
-    player_list = []
-    for servers_info in servers_info_list:
-        if servers_info['players']:
-            for player_info in servers_info['players']:
-                player_list.append(player_info['name'].decode())
-    return player_list
+info_thread = threading.Thread(target=get_servers_info)
+info_thread.start()
+
 
 #-u参数表示使用某用户的设置文件登录
 #这里需要更改qqbot的设置文件~/.qqbot-tmp/v2.3.conf？
 #参考qqbot项目的说明
 print("test get server info")
-print(get_servers_info())
+print(last_players_list)
 
 bot.Login(['-u', '2143738142'])
 
@@ -97,15 +113,39 @@ with open(replyFile, 'r') as f:
         else:
             replyDict[row[0]] = row[1]
 
+#读取好友列表
+friendFile = "friendList.txt"
+friendDict = {}
+with open(friendFile, 'r') as f:
+    spamreader = csv.reader(f, delimiter=',')
+    for row in spamreader:
+        if not row:
+            continue
+        if row[0].startswith('#'):
+            print(row)
+        else:
+            friendDict[row[0]] = row[1:]
+
 #图灵机器人平台的API
 chatAPI = "http://www.tuling123.com/openapi/api"
 requestJson = {"key": "692b5c941e7a43e2be89b1047b605049","info": "", "userid":""}
 
+
+players_list = []
+print(bot.List('buddy', qqNickName))
 #无限轮询消息并作出相应回应
 while True:
     time.sleep(2)
     fromType, groupNumber, fromNumber, content = bot.poll()
     print (fromType, groupNumber, fromNumber, content)
+    for qqNickName in friendDict:
+        for friend in friendDict[qqNickName]:
+            if players_list != last_players_list:
+                if friend in last_players_list:
+                    players_list = last_players_list
+                    myQQId = bot.List('buddy', qqNickName)[0]
+                    print(myQQId)
+                    bot.SendTo(myQQId, "你的好友{}上线了".format(friend))
     keywordInContent = False
     if groupNumber == mainGroup.uin:
         sendtoGroup = mainGroup
@@ -121,13 +161,13 @@ while True:
     if "@brainfullyTEE" in content:
         print ("@我的消息")
         if "player" in content:
-            players_list = get_servers_info()
+            players_list = last_players_list
             if len(players_list) == 0:
                 sendStr = "目前没人在线."
             else:
                 sendStr = ("目前在线玩家数为{}，分别为:".format(len(players_list))) + (", ".join(players_list))
             bot.SendTo(sendtoGroup, sendStr)
-        if "?" in content or "？" in content:
+        elif "?" in content or "？" in content:
             for keyword in replyDict:
                 if keyword.lower() in content.lower():
                     bot.SendTo(sendtoGroup, replyDict[keyword])
