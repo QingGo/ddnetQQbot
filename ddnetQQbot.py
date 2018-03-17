@@ -150,7 +150,6 @@ def sendMessageReply():
         if "@brainfullyTEE" in content:
             print ("@我的消息")
             if "player" in content:
-                players_list = last_players_list
                 if len(players_list) == 0:
                     sendStr = "目前没人在线."
                 else:
