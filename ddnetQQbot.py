@@ -147,6 +147,8 @@ def sendMessageReply():
         #这里改为你的ID
         if "大家好" in content:
             bot.SendTo(sendtoGroup, "欢迎新人～如果有什么游戏相关的问题可以带上问号“？”并且@我向我提问～")
+        if "help" in content:
+            bot.SendTo(sendtoGroup, "如果有什么游戏相关的问题，可以用包含关键词和问号“？”的句子并且@我向我提问～项目地址：https://github.com/QingGo/ddnetQQbot")
         if "@brainfullyTEE" in content:
             print ("@我的消息")
             if "player" in content:
